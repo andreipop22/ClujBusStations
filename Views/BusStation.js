@@ -8,7 +8,8 @@ import {
     Text,
     View,
     TouchableHighlight,
-    Image
+    Image,
+    StatusBar
 
 } from 'react-native';
 import Button from 'react-native-button';
@@ -51,6 +52,7 @@ export default class BusStation extends Component {
     render() {
         return (
             <ScrollView contentContainerStyle={styles.contentScroll}>
+                <StatusBar hidden={true}/>
                 <Text style={styles.Text}>
                     Dispicerat Ira
                 </Text>
@@ -228,8 +230,6 @@ var styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
     },
-    Button: {},
-
     Text: {
         marginTop: 20,
         fontFamily: 'Verdana',

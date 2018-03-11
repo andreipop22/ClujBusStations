@@ -5,22 +5,46 @@ import {
     View,
     Image,
     ImageBackground,
-    TouchableHighlight
+    TouchableHighlight,
+    Animated,
+    Easing,
+    StatusBar
 } from 'react-native';
 import Button from 'react-native-button';
 // import AccessToken from 'react-native-fbsdk';
 // import LoginManager from 'react-native-fbsdk';
 import FBSDK, { LoginManager , AccessToken } from 'react-native-fbsdk';
+// import {GoogleSigninButton} from 'react-native-google-signin';
 import firebase from 'firebase';
 
 var codePush = require("react-native-fbsdk");
+//const user = GoogleSignin.currentUser();
 
 export default class HomeScreen extends Component {
     static navigationOptions = {
         header: null,
     };
 
+    constructor(props){
+        super(props);
+        this.spinValue = new Animated.Value(0)
+
+    }
+
+    spin () {
+        this.spinValue.setValue(0)
+        Animated.timing(
+            this.spinValue,
+            {
+                toValue: 1,
+                duration: 4000,
+                easing: Easing.linear
+            }
+        ).start(() => this.spin())
+    }
+
     componentWillMount(){
+        this.spin();
         const config = {
             apiKey: "AIzaSyB2YlHXN5ATjpQNGmLLyzqKmiMjsubdfTc",
             authDomain: "clujbusstations.firebaseapp.com",
@@ -29,9 +53,31 @@ export default class HomeScreen extends Component {
         if (!firebase.apps.length) {
             firebase.initializeApp(config);
         }
+        // GoogleSignin.hasPlayServices({ autoResolve: true }).then(() => {
+        //
+        //     GoogleSignin.currentUserAsync().then((user) => {
+        //         console.log('USER', user);
+        //         this.setState({user: user});
+        //     }).done();   // play services are available. can now configure library
+        //
+        // })
+        //     .catch((err) => {
+        //         console.log("Play services error", err.code, err.message);
+        //     })
     }
 
 
+    gmailLogin(){
+        // GoogleSignin.signIn()
+        //     .then((user) => {
+        //         console.log(user);
+        //         this.setState({user: user});
+        //     })
+        //     .catch((err) => {
+        //         console.log('WRONG SIGNIN', err);
+        //     })
+        //     .done();
+    }
 
     _fbAuth(){
 
@@ -57,10 +103,16 @@ export default class HomeScreen extends Component {
         // )
     }
     render() {
+        const spin = this.spinValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ["0deg", "360deg"]
+        });
         const {navigate} = this.props.navigation;
         return (
             <ImageBackground source={require('../Images/hexa.jpg')} style={styles.MainContainer}>
                 <View style={styles.container}>
+
+
                     <Image style={styles.image} source={require('../Images/bus.png')}></Image>
                     <View style={styles.backdropView}>
                         <Text style={styles.title}>
@@ -139,6 +191,11 @@ export default class HomeScreen extends Component {
                             {/*onPress={() => navigate('Register')}*/}
                             {/*title="Register"*/}
                         {/*>Register</Button>*/}
+                        {/*<GoogleSigninButton*/}
+                            {/*style={{width: 48, height: 48}}*/}
+                            {/*size={GoogleSigninButton.Size.Icon}*/}
+                            {/*color={GoogleSigninButton.Color.Dark}*/}
+                            {/*onPress={this._signIn.bind(this)}/>*/}
                     </View>
                 </View>
             </ImageBackground>
@@ -173,7 +230,8 @@ const styles = StyleSheet.create({
         fontSize: 40,
         textAlign: 'center',
         color:'#1E90FF',
-        margin: 5,
+        fontWeight: 'bold',
+
     },
     details: {
         fontSize: 20,
@@ -189,8 +247,8 @@ const styles = StyleSheet.create({
     },
     image: {
         marginTop: 40,
-        width: 120,
-        height: 120,
+        width: 180,
+        height: 180,
         alignSelf: 'center'
 
     }

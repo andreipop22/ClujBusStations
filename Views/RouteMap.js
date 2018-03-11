@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
+import firebase from 'firebase';
 import {
     StyleSheet,
     View,
     Image,
     Text,
     TouchableHighlight,
-    Dimensions,
     StatusBar
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -13,51 +13,35 @@ import Polyline from '@mapbox/polyline';
 
 var MapView = require('react-native-maps');
 
-const {width, height} = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
-const markerIDs = ['Marker1', 'Marker2'];
 const timeout = 1000;
 let animationTimeout;
 const LATITUDE_DELTA = 0.15;
 const LONGITUDE_DELTA = 0.15;
+var stationsArr = [];
 
-
-function createStation(longitude, latitude, name) {
+function createStation(longitude, latitude, name){
     return {
         latitude: latitude,
         longitude: longitude,
-        name: name
+        name:name
     };
 }
 
-const MARKERS = [
-    createStation(23.617301, 46.778918, "Cinema Marasti"),
-    createStation(23.611604, 46.777899, "P-ta. Marasti"),
-    createStation(23.604646, 46.775998, "Biserica Sf. Petru"),
-    createStation(23.597372, 46.773345, "Regionala CFR"),
-    createStation(23.59204, 46.771692, "Victoria"),
-    createStation(23.586971, 46.769763, "Memorandumului"),
-    createStation(23.580179, 46.766507, "Calea Motilor"),
-    createStation(23.574954, 46.767948, "Hotel Sport"),
-    createStation(23.569601, 46.766878, "Sala Polivalenta"),
+export default class RouteMap extends Component {
+    // static navigationOptions = {
+    //     drawerIcon: ({tintColor}) => {
+    //         return (
+    //             <MaterialIcons
+    //                 name='map'
+    //                 size={24}
+    //                 style={{color: tintColor}}
+    //             >
+    //             </MaterialIcons>
+    //         );
+    //     }
+    // };
 
 
-];
-
-export default class MainMap extends Component {
-    static navigationOptions = {
-
-        drawerIcon: ({tintColor}) => {
-            return (
-                <MaterialIcons
-                    name='map'
-                    size={24}
-                    style={{color: tintColor}}
-                >
-                </MaterialIcons>
-            );
-        }
-    };
     constructor(props) {
         super(props);
         this.mapRef = null;
@@ -74,7 +58,25 @@ export default class MainMap extends Component {
                 longitude: 23.5912,
                 latitudeDelta: 0.15,
                 longitudeDelta: 0.15
-            }
+            },
+            loaded: this.props.navigation.state.params.busStations,
+            Stations:[]
+        }
+    }
+
+
+    getStations() {
+        stationsArr=[];
+        var ref = firebase.database().ref("BusStations");
+        for(var i=0;i<this.state.loaded.length;i++){
+            ref.orderByChild("id").equalTo(this.state.loaded[i].idStation).on("value", (data)=>{
+                data.forEach(function (childSnapshot) {
+                    var item=childSnapshot.val();
+                    item.key = childSnapshot.key;
+                    stationsArr.push(item);
+                });
+                this.setState({Stations:stationsArr});
+            });
         }
     }
 
@@ -84,7 +86,6 @@ export default class MainMap extends Component {
             longitude: this.state.markerPosition.longitude,
         };
     }
-
 
     watchID = null;
 
@@ -108,8 +109,6 @@ export default class MainMap extends Component {
     }
 
     componentDidMount() {
-
-        // this.createStations();
 
         this.getDirections("46.781842, 23.6362", "46.780784,23.6278");
         this.getDirections("46.781842, 23.6362", "46.766878,23.569601");
@@ -138,16 +137,28 @@ export default class MainMap extends Component {
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA
             };
-        });
-        animationTimeout = setTimeout(() => {
-            this.focus1();
-        }, timeout);
+        })
+        // animationTimeout = setTimeout(() => {
+        //     this.focus1();
+        // }, timeout);
     }
 
-     componentWillUnmount() {
-        if (animationTimeout) {
-            clearTimeout(animationTimeout);
+    // componentWillUnmount() {
+    //     if (animationTimeout) {
+    //         clearTimeout(animationTimeout);
+    //     }
+    // }
+
+    componentWillMount() {
+        const config = {
+            apiKey: "AIzaSyB2YlHXN5ATjpQNGmLLyzqKmiMjsubdfTc",
+            authDomain: "clujbusstations.firebaseapp.com",
+            databaseURL: "https://clujbusstations.firebaseio.com",
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(config);
         }
+        this.getStations();
     }
 
     focusMap(markers, animated) {
@@ -157,20 +168,20 @@ export default class MainMap extends Component {
     focus1() {
         var marker1 = this.createMarker();
         var marker2 = this.createMarker();
-        marker1.longitude = marker1.longitude - 0.01;
-        marker2.longitude = marker2.longitude + 0.01;
+        marker1.longitude=marker1.longitude-0.01;
+        marker2.longitude=marker2.longitude+0.01;
         animationTimeout = setTimeout(() => {
             this.focusMap([
-                marker1, marker2
+                marker1,marker2
             ], true);
 
         }, timeout);
 
     }
 
-    componentWillMount() {
-        navigator.geolocation.clearWatch(this.watchID);
-    }
+    // componentWillMount() {
+    //     navigator.geolocation.clearWatch(this.watchID);
+    // }
 
     goToBusLines() {
         this.props.navigation.navigate('BusStation');
@@ -180,17 +191,14 @@ export default class MainMap extends Component {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}/>
-
-                <MapView provider={this.props.provider} ref={ref => {
-                    this.map = ref;
-                }} style={styles.map} initialRegion={{
+                <MapView provider={this.props.provider} ref={ref => { this.map = ref; }}  style={styles.map} initialRegion={{
                     latitude: this.state.initialPosition.latitude,
                     longitude: this.state.initialPosition.longitude,
 
                     latitudeDelta: 0.18,
                     longitudeDelta: 0.18,
                 }}>
-                    {MARKERS.map((marker, i) => (
+                    {this.state.Stations.map((marker, i) => (
                         <MapView.Marker
                             key={i}
                             coordinate={marker}
@@ -205,44 +213,6 @@ export default class MainMap extends Component {
                             </MapView.Callout>
                         </MapView.Marker>
                     ))}
-                    <MapView.Marker identifier="Marker2" coordinate={this.state.markerPosition}>
-                        <View style={styles.radius}>
-                            <View style={styles.marker}/>
-                        </View>
-                    </MapView.Marker>
-
-                    <MapView.Marker coordinate={{
-                        latitude: 46.78175,
-                        longitude: 23.6363,
-                    }}
-                                    icon={require('../Images/_Bus_Station-512.png')}
-                    >
-                        <Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}>
-
-                        </Image>
-                        <MapView.Callout>
-                            <TouchableHighlight onPress={() => this.goToBusLines()} underlayColor='#dddddd'>
-                                <View style={styles.tooltip}>
-                                    <Text>Dispecerat IRA</Text>
-                                </View>
-                            </TouchableHighlight>
-                        </MapView.Callout>
-
-                    </MapView.Marker>
-                    <MapView.Polyline
-                        coordinates={this.state.coords}
-                        strokeWidth={3}
-                        strokeColor="blue"/>
-
-                    <MapView.Marker coordinate={{
-                        latitude: 46.780784,
-                        longitude: 23.6278
-
-                    }}>
-                        <Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}>
-
-                        </Image>
-                    </MapView.Marker>
 
                 </MapView>
             </View>
@@ -250,7 +220,7 @@ export default class MainMap extends Component {
     };
 
 }
-MainMap.propTypes = {
+RouteMap.propTypes = {
     provider: MapView.ProviderPropType,
 };
 const styles = StyleSheet.create({
@@ -265,7 +235,7 @@ const styles = StyleSheet.create({
     tooltip: {
         width: 120,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems:'center'
     },
     radius: {
         height: 50,

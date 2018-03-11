@@ -5,6 +5,7 @@ import {
     View,
     ScrollView,
     Alert,
+    StatusBar
 } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {Fumi} from 'react-native-textinput-effects';

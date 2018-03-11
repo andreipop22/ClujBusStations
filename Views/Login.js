@@ -7,6 +7,7 @@ import {
     View,
     ScrollView,
     ActivityIndicator,
+    StatusBar
 } from 'react-native';
 import CheckBox from 'react-native-checkbox';
 import Button from 'react-native-button';
@@ -41,58 +42,18 @@ export default class LoginScreen extends Component {
     onPressSignIn() {
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).then(
             () => {
-                this.setState({authenticating: true})
-                //this.setTimeout(()=>{
+                this.setState({authenticating: true});
                     this.props.navigation.navigate('Map');
-               // },500);
-
             }
         )
             .catch((()=>{
                 this.setState({errors:'Authentication failed!'})
             }))
-
-
     }
 
     static navigationOptions = {
         header: null,
-    }
-
-    // async onLoginPressed() {
-    //     const {navigate} = this.props.navigation;
-    //     try {
-    //         let response = await fetch('http://192.168.56.1:8080/user/login', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Accept': 'application/json',
-    //                 'Content-Type': 'application/json'
-    //
-    //             },
-    //             body: JSON.stringify({
-    //                 email: this.state.email,
-    //                 password: this.state.password,
-    //             })
-    //         });
-    //         let res = await response.text();
-    //
-    //         if (response.status >= 200 && response.status < 300) {
-    //             console.log("res success in: " + res)
-    //             this.setState({errors: ""})
-    //             navigate('UserLoggedIn')        // navigate('ForgotPassword')
-    //         } else {
-    //             let errors = res;
-    //             throw errors;
-    //         }
-    //     } catch (errors) {
-    //         console.log('There has been a problem with your fetch operation: ' + errors);
-    //         const formErrors = errors.split(';');
-    //         const count = formErrors.length - 1;
-    //         console.log("lungime erori" + count)
-    //         console.log(formErrors[0]);
-    //         this.setState({errors: errors})
-    //     }
-    // }
+    };
 
     renderCurrentState() {
         const {navigate} = this.props.navigation;
