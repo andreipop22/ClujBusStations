@@ -219,9 +219,7 @@ export default class MainMap extends Component {
                     {/*longitude: 23.6278*/}
 
                     {/*}}>*/}
-                    {/*<Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}>*/}
 
-                    {/*</Image>*/}
                     {/*</MapView.Marker>*/}
                     {/*<Button*/}
                         {/*containerStyle={{*/}
