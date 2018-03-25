@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image, TouchableHighlight} from 'react-native';
+import {StyleSheet, View, Image, TouchableHighlight, TouchableOpacity} from 'react-native';
 import HomeScreen from './Views/Home';
 import LoginScreen from './Views/Login';
 import RegisterScreen from './Views/Register';
@@ -8,13 +8,19 @@ import PresentationBusLine from './Views/PresentationBusLine';
 import DrawerScreen from './Views/DrawerScreen';
 import BusLines from './Views/BusLines';
 import RouteMap from './Views/RouteMap';
+import MaterialIcons from 'react-native-vector-icons/FontAwesome'
+
+// import Example from './Views/Example';
 import {
     StackNavigator,
 } from 'react-navigation';
+import MetropolitanBuses from "./Views/MetropolitanBuses";
+import UrbanBuses from "./Views/UrbanBuses";
 
 const Navigation = StackNavigator({
 
 
+        // Example:{screen:Example},
         Drawer: {screen: DrawerScreen},
         Home: {screen: HomeScreen,
                  navigationOptions: {
@@ -25,6 +31,8 @@ const Navigation = StackNavigator({
         BusStation:{screen: BusStation},
         BusLines:{screen:BusLines},
         PresentationBusLine:{screen:PresentationBusLine},
+        MetropolitanBuses:{screen:MetropolitanBuses},
+        UrbanBuses:{screen:UrbanBuses},
         RouteMap:{screen:RouteMap,
             navigationOptions: {
                 gesturesEnabled: false,
@@ -43,36 +51,30 @@ const Navigation = StackNavigator({
                 paddingTop:-10,
 
             },
-            // headerTitleStyle: {
-            //
-            //     fontWeight: '300',
-            //
-            //     color: '#ffffff',
-            //
-            //  //   fontFamily:"GloriaHallelujah",
-            //
-            //     fontSize: 16
-            // },
             title: 'Cluj Bus Stations',
             headerTintColor: 'white',
             headerLeft: <View>
-                <TouchableHighlight
+                <TouchableOpacity
                     onPress={() => {
                         navigation.navigate('DrawerOpen')
                     }}>
                     <Image style={styles.image} source={require('./Images/menu.png')}></Image>
-                </TouchableHighlight>
+                </TouchableOpacity>
             </View>,
             headerRight: <View>
-                <TouchableHighlight
+                <TouchableOpacity
                     onPress={() => {
                        if(this.state.legend == true)
                            this.setState({legend:false});
                        else
                            this.setState({legend:true})
                     }}>
-                    <Image style={styles.image} source={require('./Images/info.png')}></Image>
-                </TouchableHighlight>
+                    <MaterialIcons
+                        name='street-view'
+                        size={24}
+                    >
+                    </MaterialIcons>
+                </TouchableOpacity>
             </View>
         })
     });

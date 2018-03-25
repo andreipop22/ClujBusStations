@@ -5,11 +5,12 @@ import {
     View,
     Image,
     Text,
+    Dimensions,
     TouchableHighlight,
     StatusBar
 } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Polyline from '@mapbox/polyline';
+import MapViewDirections from './MapViewDirections';
 
 var MapView = require('react-native-maps');
 
@@ -17,7 +18,18 @@ const timeout = 1000;
 let animationTimeout;
 const LATITUDE_DELTA = 0.15;
 const LONGITUDE_DELTA = 0.15;
+const origin = {latitude: 46.781842,  longitude: 23.6362};
+const destination = {latitude: 46.780784, longitude: 23.6278};
+const GOOGLE_MAPS_API_KEY='AIzaSyCW3Luze8Z-YUAAtiU1fHyIo1H4y2gf6rY';
 var stationsArr = [];
+
+
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+
+
+const GOOGLE_MAPS_APIKEY = 'AIzaSyBE4DQ4lNVRY3ThXiswNWvJLQMwiAZM-A4';
+
 
 function createStation(longitude, latitude, name){
     return {
@@ -75,6 +87,17 @@ export default class RouteMap extends Component {
                     item.key = childSnapshot.key;
                     stationsArr.push(item);
                 });
+                // var tourStation=[];
+                // var ti=0;
+                // var retourStation=[];
+                // var ri=0;
+                // for(var i=0;i<stationsArr.length;i++)
+                // {
+                //     if(stationsArr[i].direction='dus')
+                //         tourStation[ti]=stationsArr[i];
+                //     else if(stationsArr[i].direction='intors')
+                //         to
+                // }
                 this.setState({Stations:stationsArr});
             });
         }
@@ -191,18 +214,47 @@ export default class RouteMap extends Component {
         return (
             <View style={styles.container}>
                 <StatusBar hidden={true}/>
-                <MapView provider={this.props.provider} ref={ref => { this.map = ref; }}  style={styles.map} initialRegion={{
-                    latitude: this.state.initialPosition.latitude,
-                    longitude: this.state.initialPosition.longitude,
+                {/*<MapView provider={this.props.provider} ref={ref => { this.map = ref; }}  style={styles.map} initialRegion={{*/}
+                    {/*latitude: this.state.initialPosition.latitude,*/}
+                    {/*longitude: this.state.initialPosition.longitude,*/}
 
-                    latitudeDelta: 0.18,
-                    longitudeDelta: 0.18,
-                }}>
+                    {/*latitudeDelta: 0.18,*/}
+                    {/*longitudeDelta: 0.18,*/}
+                {/*}}>*/}
+                    {/*{this.state.Stations.map((marker, i) => (*/}
+                        {/*<MapView.Marker*/}
+                            {/*key={i}*/}
+                            {/*coordinate={marker}*/}
+                        {/*>*/}
+                            {/*<Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}/>*/}
+                            {/*<MapView.Callout>*/}
+                                {/*<TouchableHighlight onPress={() => this.goToBusLines()} underlayColor='#dddddd'>*/}
+                                    {/*<View style={styles.tooltip}>*/}
+                                        {/*<Text>{marker.name}</Text>*/}
+                                    {/*</View>*/}
+                                {/*</TouchableHighlight>*/}
+                            {/*</MapView.Callout>*/}
+                        {/*</MapView.Marker>*/}
+                    {/*))}*/}
+
+                {/*</MapView>*/}
+                <MapView
+                    initialRegion={{
+                        latitude: 46.7689,
+                        longitude: 23.5912,
+                        latitudeDelta: LATITUDE_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA,
+                    }}
+                    style={StyleSheet.absoluteFill}
+                    ref={c => this.mapView = c}
+                    // onPress={this.onMapPress}
+                >
                     {this.state.Stations.map((marker, i) => (
                         <MapView.Marker
                             key={i}
                             coordinate={marker}
                         >
+
                             <Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}/>
                             <MapView.Callout>
                                 <TouchableHighlight onPress={() => this.goToBusLines()} underlayColor='#dddddd'>
@@ -214,6 +266,29 @@ export default class RouteMap extends Component {
                         </MapView.Marker>
                     ))}
 
+                    {(this.state.Stations.map((marker,i) => (
+                        <MapViewDirections
+                            origin={this.state.Stations[i]}
+                            key={i}
+                           // waypoints={ (this.state.Stations.length > 2) ? this.state.Stations.slice(1, -1): null}
+                            destination={this.state.Stations[i+1]}
+                            apikey={GOOGLE_MAPS_APIKEY}
+                            strokeWidth={3}
+                            strokeColor="blue"
+                            onReady={(result) => {
+                                this.mapView.fitToCoordinates(result.coordinates, {
+                                    edgePadding: {
+                                        right: (width / 20),
+                                        bottom: (height / 20),
+                                        left: (width / 20),
+                                        top: (height / 20),
+                                    }
+                                });
+                            }}
+                            onError={(errorMessage) => {
+                            }}
+                        />
+                    )))}
                 </MapView>
             </View>
         );

@@ -10,11 +10,11 @@ import {
     StatusBar
 } from 'react-native';
 import Button from 'react-native-button';
-import MetropolitanBuses from './MetropolitanBuses';
-import UrbanBuses from './UrbanBuses';
-var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+import PresentationBusLine from "./PresentationBusLine";
 
-export default class BusLines extends Component {
+var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
+export default class UrbanBuses extends Component {
 
     constructor(props) {
         super(props);
@@ -30,7 +30,7 @@ export default class BusLines extends Component {
         this.state = {
             dataSource: ds,
             loaded: false,
-            busLines:[],
+            busLines: [],
         };
     }
 
@@ -42,7 +42,7 @@ export default class BusLines extends Component {
 
     getBusLines() {
         let ref = firebase.database().ref('busLines/');
-        ref.on("value", (data) => {
+        ref.orderByChild("type").equalTo("urban").on("value", (data) => {
             var returnArr = [];
 
             data.forEach(function (childSnapshot) {
@@ -69,60 +69,44 @@ export default class BusLines extends Component {
             );
         }
     };
+
     render() {
         return (
 
-        <ScrollView style={styles.container}>
-            <StatusBar hidden={true}/>
-            <Button
-                containerStyle={{
-                    height: 50,
-                    overflow: 'hidden',
-                    backgroundColor: '#1E90FF',
-                    borderRadius: 5,
-                    width: 240,
-                    marginTop: 30,
-                    marginBottom: 30,
-                    alignSelf: 'center',
+            <ScrollView style={styles.container}>
+                <StatusBar hidden={true}/>
+                {this.state.busLines.map((bus, i) => (
+                    <Button
+                        containerStyle={{
+                            height: 50,
+                            overflow: 'hidden',
+                            backgroundColor: '#1E90FF',
+                            borderRadius: 5,
+                            width: 180,
+                            marginTop: 30,
+                            alignSelf: 'center',
+                            marginBottom: 30
 
-                }}
-                style={{fontSize: 15, color: 'black', fontFamily: 'Verdana', marginLeft:-40, marginRight:20}}
-                onPress={() => this.props.navigation.navigate('MetropolitanBuses')}
-            >
-                <TouchableHighlight>
-                    <Image
-                        style={styles.ButtonImage}
-                        source={require('../Images/BusLineIcon.png')}
-                    />
-                </TouchableHighlight>
-                Metropolitan buses
-            </Button>
-            <Button
-                containerStyle={{
-                    height: 50,
-                    overflow: 'hidden',
-                    backgroundColor: '#1E90FF',
-                    borderRadius: 5,
-                    width: 240,
-                    marginTop: 30,
-                    marginBottom: 30,
-                    alignSelf: 'center',
+                        }}
+                        style={{fontSize: 15, color: 'black', fontFamily: 'Verdana', marginLeft: -40, marginRight: 40}}
+                        key={i}
+                        onPress={() => this.props.navigation.navigate('PresentationBusLine', {
+                            busId: bus.id,
+                            busName: bus.name
+                        })}
+                    >
+                        {/*<TouchableHighlight>*/}
+                            {/*<Image*/}
+                                {/*style={styles.ButtonImage}*/}
+                                {/*source={bus.image}*/}
+                            {/*/>*/}
+                        {/*</TouchableHighlight>*/}
+                        {bus.name}
+                    </Button>
+                ))}
+            </ScrollView>
 
-                }}
-                style={{fontSize: 15, color: 'black', fontFamily: 'Verdana', marginLeft:-100, marginRight:55}}
-                onPress={() => this.props.navigation.navigate('UrbanBuses')}
-            >
-                <TouchableHighlight>
-                    <Image
-                        style={styles.ButtonImage}
-                        source={require('../Images/BusLineIcon.png')}
-                    />
-                </TouchableHighlight>
-                Urban buses
-            </Button>
-        </ScrollView>
-
-    );
+        );
     }
 
 }
@@ -157,8 +141,8 @@ var styles = StyleSheet.create({
         alignSelf: 'center',
     },
     Image: {
-        marginTop:30,
-        marginLeft:100,
+        marginTop: 30,
+        marginLeft: 100,
         width: 100,
         height: 100,
         position: 'absolute'

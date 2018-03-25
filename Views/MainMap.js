@@ -5,16 +5,18 @@ import {
     Image,
     Text,
     TouchableHighlight,
-    Dimensions,
-    StatusBar
+    TouchableOpacity,
+    Dimensions
 } from 'react-native';
+// import { Container, Header, Content,Button, Icon } from 'native-base';
+// import Button from 'react-native-button';
+// import MaterialIcons from 'react-native-vector-icons/Entypo'
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Polyline from '@mapbox/polyline';
 
 var MapView = require('react-native-maps');
 
 const {width, height} = Dimensions.get('window');
-const ASPECT_RATIO = width / height;
 const markerIDs = ['Marker1', 'Marker2'];
 const timeout = 1000;
 let animationTimeout;
@@ -30,27 +32,12 @@ function createStation(longitude, latitude, name) {
     };
 }
 
-const MARKERS = [
-    createStation(23.617301, 46.778918, "Cinema Marasti"),
-    createStation(23.611604, 46.777899, "P-ta. Marasti"),
-    createStation(23.604646, 46.775998, "Biserica Sf. Petru"),
-    createStation(23.597372, 46.773345, "Regionala CFR"),
-    createStation(23.59204, 46.771692, "Victoria"),
-    createStation(23.586971, 46.769763, "Memorandumului"),
-    createStation(23.580179, 46.766507, "Calea Motilor"),
-    createStation(23.574954, 46.767948, "Hotel Sport"),
-    createStation(23.569601, 46.766878, "Sala Polivalenta"),
-
-
-];
-
 export default class MainMap extends Component {
     static navigationOptions = {
-
         drawerIcon: ({tintColor}) => {
             return (
                 <MaterialIcons
-                    name='map'
+                    name='google-maps'
                     size={24}
                     style={{color: tintColor}}
                 >
@@ -58,6 +45,8 @@ export default class MainMap extends Component {
             );
         }
     };
+
+
     constructor(props) {
         super(props);
         this.mapRef = null;
@@ -99,8 +88,8 @@ export default class MainMap extends Component {
                     latitude: point[0],
                     longitude: point[1]
                 }
-            });
-            this.setState({coords: coords});
+            })
+            this.setState({coords: coords})
             return coords
         } catch (error) {
             return error
@@ -108,13 +97,6 @@ export default class MainMap extends Component {
     }
 
     componentDidMount() {
-
-        // this.createStations();
-
-        this.getDirections("46.781842, 23.6362", "46.780784,23.6278");
-        this.getDirections("46.781842, 23.6362", "46.766878,23.569601");
-
-
         navigator.geolocation.getCurrentPosition((position) => {
                 let lat = parseFloat(position.coords.latitude);
                 let long = parseFloat(position.coords.longitude);
@@ -138,13 +120,13 @@ export default class MainMap extends Component {
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA
             };
-        });
+        })
         animationTimeout = setTimeout(() => {
             this.focus1();
         }, timeout);
     }
 
-     componentWillUnmount() {
+    componentWillUnmount() {
         if (animationTimeout) {
             clearTimeout(animationTimeout);
         }
@@ -179,8 +161,6 @@ export default class MainMap extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <StatusBar hidden={true}/>
-
                 <MapView provider={this.props.provider} ref={ref => {
                     this.map = ref;
                 }} style={styles.map} initialRegion={{
@@ -190,60 +170,83 @@ export default class MainMap extends Component {
                     latitudeDelta: 0.18,
                     longitudeDelta: 0.18,
                 }}>
-                    {MARKERS.map((marker, i) => (
-                        <MapView.Marker
-                            key={i}
-                            coordinate={marker}
-                        >
-                            <Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}/>
-                            <MapView.Callout>
-                                <TouchableHighlight onPress={() => this.goToBusLines()} underlayColor='#dddddd'>
-                                    <View style={styles.tooltip}>
-                                        <Text>{marker.name}</Text>
-                                    </View>
-                                </TouchableHighlight>
-                            </MapView.Callout>
-                        </MapView.Marker>
-                    ))}
+                    {/*{MARKERS.map((marker, i) => (*/}
+                    {/*<MapView.Marker*/}
+                    {/*key={i}*/}
+                    {/*coordinate={marker}*/}
+                    {/*>*/}
+                    {/*<Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}/>*/}
+                    {/*<MapView.Callout>*/}
+                    {/*<TouchableHighlight onPress={() => this.goToBusLines()} underlayColor='#dddddd'>*/}
+                    {/*<View style={styles.tooltip}>*/}
+                    {/*<Text>{marker.name}</Text>*/}
+                    {/*</View>*/}
+                    {/*</TouchableHighlight>*/}
+                    {/*</MapView.Callout>*/}
+                    {/*</MapView.Marker>*/}
+                    {/*))}*/}
                     <MapView.Marker identifier="Marker2" coordinate={this.state.markerPosition}>
                         <View style={styles.radius}>
                             <View style={styles.marker}/>
                         </View>
                     </MapView.Marker>
 
-                    <MapView.Marker coordinate={{
-                        latitude: 46.78175,
-                        longitude: 23.6363,
-                    }}
-                                    icon={require('../Images/_Bus_Station-512.png')}
-                    >
-                        <Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}>
+                    {/*<MapView.Marker coordinate={{*/}
+                    {/*latitude: 46.78175,*/}
+                    {/*longitude: 23.6363,*/}
+                    {/*}}*/}
+                    {/*icon={require('../Images/_Bus_Station-512.png')}*/}
+                    {/*>*/}
+                    {/*<Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}>*/}
 
-                        </Image>
-                        <MapView.Callout>
-                            <TouchableHighlight onPress={() => this.goToBusLines()} underlayColor='#dddddd'>
-                                <View style={styles.tooltip}>
-                                    <Text>Dispecerat IRA</Text>
-                                </View>
-                            </TouchableHighlight>
-                        </MapView.Callout>
+                    {/*</Image>*/}
+                    {/*<MapView.Callout>*/}
+                    {/*<TouchableHighlight onPress={() => this.goToBusLines()} underlayColor='#dddddd'>*/}
+                    {/*<View style={styles.tooltip}>*/}
+                    {/*<Text>Dispecerat IRA</Text>*/}
+                    {/*</View>*/}
+                    {/*</TouchableHighlight>*/}
+                    {/*</MapView.Callout>*/}
 
-                    </MapView.Marker>
-                    <MapView.Polyline
-                        coordinates={this.state.coords}
-                        strokeWidth={3}
-                        strokeColor="blue"/>
+                    {/*</MapView.Marker>*/}
+                    {/*<MapView.Polyline*/}
+                    {/*coordinates={this.state.coords}*/}
+                    {/*strokeWidth={3}*/}
+                    {/*strokeColor="blue"/>*/}
 
-                    <MapView.Marker coordinate={{
-                        latitude: 46.780784,
-                        longitude: 23.6278
+                    {/*<MapView.Marker coordinate={{*/}
+                    {/*latitude: 46.780784,*/}
+                    {/*longitude: 23.6278*/}
 
-                    }}>
-                        <Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}>
+                    {/*}}>*/}
+                    {/*<Image style={styles.image} source={require('../Images/_Bus_Station-512.png')}>*/}
 
-                        </Image>
-                    </MapView.Marker>
+                    {/*</Image>*/}
+                    {/*</MapView.Marker>*/}
+                    {/*<Button*/}
+                        {/*containerStyle={{*/}
+                            {/*height: 50,*/}
+                            {/*overflow: 'hidden',*/}
+                            {/*borderColor:'rgba(255, 0, 0, 0.3)',*/}
+                            {/*backgroundColor:'rgba(0, 255, 0, 0.3)',*/}
+                            {/*borderRadius: 100,*/}
+                            {/*width: 50,*/}
+                            {/*marginTop: 30,*/}
+                            {/*marginBottom: 30,*/}
+                            {/*alignSelf: 'center',*/}
 
+                        {/*}}*/}
+                        {/*style={{fontSize: 15, color: 'black', fontFamily: 'Verdana', marginRight: 20}}*/}
+                        {/*onPress={() => this.props.navigation.navigate('MetropolitanBuses')}*/}
+                    {/*>*/}
+                        {/*<TouchableOpacity>*/}
+                            {/*<Image style={styles.image} source={require('../Images/BusTicket.png')}/>*/}
+                        {/*</TouchableOpacity>*/}
+                    {/*</Button>*/}
+                    {/*<Button iconLeft>*/}
+                        {/*<Icon name='home' />*/}
+                        {/*<Text>Home</Text>*/}
+                    {/*</Button>*/}
                 </MapView>
             </View>
         );
@@ -309,7 +312,11 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center'
-
     },
-
+    ButtonImage: {
+        marginTop: 5,
+        marginLeft: 5,
+        width: 40,
+        height: 40,
+    },
 });
