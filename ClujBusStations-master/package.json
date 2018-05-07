@@ -1,0 +1,51 @@
+{
+  "name": "ClujBusStations",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "react-native-scripts": "1.8.1",
+    "jest-expo": "23.0.0",
+    "react-test-renderer": "16.0.0"
+  },
+  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "scripts": {
+    "start": "react-native-scripts start",
+    "eject": "react-native-scripts eject",
+    "android": "react-native-scripts android",
+    "ios": "react-native-scripts ios",
+    "test": "node node_modules/jest/bin/jest.js --watch"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/GloriaHallelujah"
+    ]
+  },
+  "jest": {
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "@mapbox/polyline": "^0.2.0",
+    "expo": "^23.0.4",
+    "firebase": "^4.8.1",
+    "lodash.isequal": "^4.5.0",
+    "native-base": "^0.5.15",
+    "prop-types": "^15.6.0",
+    "react": "16.0.0",
+    "react-native": "0.50.3",
+    "react-native-button": "^2.1.0",
+    "react-native-checkbox": "^2.0.0",
+    "react-native-dismiss-keyboard": "^1.0.0",
+    "react-native-fbsdk": "^0.7.0",
+    "react-native-floating-action": "^1.10.1",
+    "react-native-google-maps-directions": "^1.1.2",
+    "react-native-google-signin": "^0.12.0",
+    "react-native-maps": "^0.19.0",
+    "react-native-pathjs-charts": "0.0.33",
+    "react-native-picker": "^4.3.5",
+    "react-native-picker-enhanced": "^5.0.3",
+    "react-native-picker-select": "^2.0.1",
+    "react-native-textinput-effects": "^0.4.2",
+    "react-native-vector-icons": "^4.4.2",
+    "react-navigation": "^1.0.0-beta.21"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "ClujBusStations",
+  "displayName": "ClujBusStations",
+  "expo": {
+    "sdkVersion": "23.0.0",
+    "facebookScheme":"fb198241124118826"
+  }
+}
